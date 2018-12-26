@@ -45,8 +45,7 @@ namespace Shob
                 Tuple<IPAddress, int> myWeirdTuple;
                 myWeirdTuple = Tuple.Create(remoteEP.Address,i);
                 MyBots.Add(counter, myWeirdTuple);
-                counter++;
-               
+                counter++;  
             }
         }
 

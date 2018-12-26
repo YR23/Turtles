@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace victim
@@ -27,7 +28,6 @@ namespace victim
         {
             mClients = new List<TcpClient>();
             TimeDictionary = new Dictionary<string, int>();
-            
         }
 
         public async void StartListeningForIncomingConnection(IPAddress ipaddr, int port,string pass)
@@ -50,52 +50,65 @@ namespace victim
             {
                 mTCPListener.Start();
                 KeepRunning = true;
-                while (KeepRunning)
-                {
-                    TcpClient client = await mTCPListener.AcceptTcpClientAsync();
-                    controller.NewClient(client.Client.RemoteEndPoint);
-                    string result = await AskClientForPassword(client);
-                    bool correct = CheckThePass(result);
-                    if (correct)
-                    {
-                        var second = DateTime.Now.Second;
-                        var minute = DateTime.Now.Minute;
-
-                        if (!TimeDictionary.ContainsKey(minute + "|" + second))
-                            TimeDictionary[minute + "|" + second] = 0;
-                        int currentClientsSameSecond = TimeDictionary[minute+"|"+second];
-                        if (currentClientsSameSecond < 10)
-                        {
-                            TimeDictionary[minute + "|" + second] = currentClientsSameSecond + 1;
-                            StreamReader reader = null;
-                            NetworkStream nwStream = client.GetStream();
-                            //creating the buffer message
-                            byte[] buffMessage = Encoding.ASCII.GetBytes("Access Granted");
-
-                            //sending the message to the client
-                             nwStream.Write(buffMessage, 0, buffMessage.Length);
-
-                            //waiting for response
-                            reader = new StreamReader(nwStream);
-                            char[] buff = new char[64];
-                            int nRet = reader.Read(buff, 0, buff.Length);
-                            string receivedText = new string(buff).Replace("\0", "");
-                            controller.message(receivedText);
-                            Array.Clear(buff, 0, buff.Length);
-                        }
-                        client.Close();
-                        correct = false;
-                    }
-                    else
-                        client.Close();
-                }
-
+                Thread t = new Thread(VictemListener);
+                t.Start();
             }
             catch (Exception excp)
             {
                 
             }
         }
+
+        private async void VictemListener()
+        {
+            while (KeepRunning)
+            {
+                TcpClient client = await mTCPListener.AcceptTcpClientAsync();
+                Thread t = new Thread(new ParameterizedThreadStart(HandleClient));
+                t.Start(client);
+
+            }
+        }
+
+        private async void HandleClient(object mclient)
+        {
+                TcpClient client = (TcpClient)mclient;
+                string result = await AskClientForPassword(client);
+                bool correct = CheckThePass(result);
+                if (correct)
+                {
+                    var second = DateTime.Now.Second;
+                    var minute = DateTime.Now.Minute;
+
+                    if (!TimeDictionary.ContainsKey(minute + "|" + second))
+                        TimeDictionary[minute + "|" + second] = 0;
+                    int currentClientsSameSecond = TimeDictionary[minute + "|" + second];
+                    if (currentClientsSameSecond < 10)
+                    {
+                        TimeDictionary[minute + "|" + second] = currentClientsSameSecond + 1;
+                        StreamReader reader = null;
+                        NetworkStream nwStream = client.GetStream();
+                        //creating the buffer message
+                        byte[] buffMessage = Encoding.ASCII.GetBytes("Access Granted");
+
+                        //sending the message to the client
+                        nwStream.Write(buffMessage, 0, buffMessage.Length);
+
+                        //waiting for response
+                        reader = new StreamReader(nwStream);
+                        char[] buff = new char[64];
+                        int nRet = reader.Read(buff, 0, buff.Length);
+                        string receivedText = new string(buff).Replace("\0", "");
+                        controller.message(receivedText);
+                        Array.Clear(buff, 0, buff.Length);
+                    }
+                    client.Close();
+                    correct = false;
+                }
+                else
+                    client.Close();
+            }
+        
 
         private bool CheckThePass(string result)
         {
