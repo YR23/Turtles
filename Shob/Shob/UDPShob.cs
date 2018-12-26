@@ -15,7 +15,7 @@ namespace Shob
         string ShobName = "Krang";
         int ShobPort = 31337;
         UdpClient udpServer;
-        Dictionary<int,Tuple<IPAddress, int>> MyBots;
+        public Dictionary<int,Tuple<IPAddress, int>> MyBots;
         public UDPShob()
         {
             MyBots = new Dictionary<int, Tuple<IPAddress,int>>();

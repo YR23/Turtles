@@ -125,13 +125,6 @@ namespace victim
                     client.Close();
             }
 
-
-
-
-
-
-
-
         private bool CheckThePass(string result)
         {
             return result == victimPass;
