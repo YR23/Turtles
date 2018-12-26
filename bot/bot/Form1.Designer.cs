@@ -100,6 +100,7 @@
             this.PortTextBox.Name = "PortTextBox";
             this.PortTextBox.Size = new System.Drawing.Size(139, 20);
             this.PortTextBox.TabIndex = 12;
+            this.PortTextBox.Text = "2800";
             this.PortTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label9

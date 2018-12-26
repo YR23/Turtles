@@ -45,9 +45,18 @@ namespace victim
         internal void setController(controller mController)
         {
             controller = mController;
-            tcpServer.setController(mController);
+            tcpServer.setController(mController,this);
         }
 
-       
+        public void AppendText(String text)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<string>(AppendText), new object[] { text });
+                return;
+            }
+            this.messegebox.Text += text + "\r\n";
+        }
+
     }
 }

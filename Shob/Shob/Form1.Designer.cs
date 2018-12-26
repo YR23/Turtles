@@ -78,6 +78,7 @@
             this.PassTextBox.Name = "PassTextBox";
             this.PassTextBox.Size = new System.Drawing.Size(139, 20);
             this.PassTextBox.TabIndex = 14;
+            this.PassTextBox.Text = "abcd";
             this.PassTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label1
@@ -128,6 +129,7 @@
             this.PortTextBox.Name = "PortTextBox";
             this.PortTextBox.Size = new System.Drawing.Size(139, 20);
             this.PortTextBox.TabIndex = 12;
+            this.PortTextBox.Text = "2500";
             this.PortTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label9
@@ -237,6 +239,7 @@
             this.IpTextBox.Name = "IpTextBox";
             this.IpTextBox.Size = new System.Drawing.Size(139, 20);
             this.IpTextBox.TabIndex = 2;
+            this.IpTextBox.Text = "127.0.0.1";
             this.IpTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label8

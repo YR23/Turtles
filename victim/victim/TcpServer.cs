@@ -18,7 +18,9 @@ namespace victim
         IPAddress mIP;
         int mPort;
         TcpListener mTCPListener;
-
+        Mutex mutex;
+        string HackedMessage;
+        Form1 form;
         List<TcpClient> mClients;
         Dictionary<string, int> TimeDictionary;
 
@@ -28,6 +30,8 @@ namespace victim
         {
             mClients = new List<TcpClient>();
             TimeDictionary = new Dictionary<string, int>();
+            mutex = new Mutex();
+            HackedMessage = "";
         }
 
         public async void StartListeningForIncomingConnection(IPAddress ipaddr, int port,string pass)
@@ -59,21 +63,31 @@ namespace victim
             }
         }
 
-        private async void VictemListener()
+        internal void setController(controller mController, Form1 form1)
+        {
+            controller = mController;
+            form = form1;
+        }
+
+        private void VictemListener()
         {
             while (KeepRunning)
             {
-                TcpClient client = await mTCPListener.AcceptTcpClientAsync();
+
+                TcpClient client =  mTCPListener.AcceptTcpClient();
+                HackedMessage = "";
                 Thread t = new Thread(new ParameterizedThreadStart(HandleClient));
                 t.Start(client);
-
+                t.Join();
+                if (HackedMessage != "")
+                    form.AppendText(HackedMessage);
             }
         }
 
-        private async void HandleClient(object mclient)
+        private void HandleClient(object mclient)
         {
                 TcpClient client = (TcpClient)mclient;
-                string result = await AskClientForPassword(client);
+                string result = AskClientForPassword(client);
                 bool correct = CheckThePass(result);
                 if (correct)
                 {
@@ -99,7 +113,9 @@ namespace victim
                         char[] buff = new char[64];
                         int nRet = reader.Read(buff, 0, buff.Length);
                         string receivedText = new string(buff).Replace("\0", "");
-                        controller.message(receivedText);
+                        mutex.WaitOne();
+                        HackedMessage = receivedText;
+                        mutex.ReleaseMutex();
                         Array.Clear(buff, 0, buff.Length);
                     }
                     client.Close();
@@ -108,14 +124,20 @@ namespace victim
                 else
                     client.Close();
             }
-        
+
+
+
+
+
+
+
 
         private bool CheckThePass(string result)
         {
             return result == victimPass;
         }
 
-        private async Task<string> AskClientForPassword(TcpClient client)
+        private string AskClientForPassword(TcpClient client)
         {
             StreamReader reader = null;
             NetworkStream nwStream = client.GetStream();
@@ -128,7 +150,7 @@ namespace victim
             //waiting for response
             reader = new StreamReader(nwStream);
             char[] buff = new char[64];
-            int nRet = await reader.ReadAsync(buff, 0, buff.Length);
+            int nRet = reader.Read(buff, 0, buff.Length);
             string receivedText = new string(buff);
             string finalText = clearAllzeroes(receivedText);
             Array.Clear(buff, 0, buff.Length);

@@ -86,7 +86,7 @@
             this.PortText.Name = "PortText";
             this.PortText.Size = new System.Drawing.Size(139, 20);
             this.PortText.TabIndex = 3;
-            this.PortText.Text = "Number between 0-65535";
+            this.PortText.Text = "2500";
             this.PortText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // passtext
@@ -95,7 +95,7 @@
             this.passtext.Name = "passtext";
             this.passtext.Size = new System.Drawing.Size(139, 20);
             this.passtext.TabIndex = 2;
-            this.passtext.Text = "a-z";
+            this.passtext.Text = "abcd";
             this.passtext.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label1

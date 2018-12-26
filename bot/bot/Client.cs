@@ -129,13 +129,14 @@ namespace bot
                     StreamReader reader = null;
                     NetworkStream nwStream = mClient.GetStream();
                     //creating the buffer message
-                    byte[] buffMessage = Encoding.ASCII.GetBytes(pass);
+                    
                     char[] buff = new char[64];
                     reader = new StreamReader(nwStream);
                     int nRet = reader.Read(buff, 0, buff.Length);
                     string receivedText = new string(buff);
                     string finalText = clearAllzeroes(receivedText);
-                    controller.UpdateMessageBox("please Enter A Password!");
+                    controller.UpdateMessageBox(finalText);
+                    byte[] buffMessage = Encoding.ASCII.GetBytes(pass);
                     nwStream.Write(buffMessage, 0, buffMessage.Length);
                     //waiting for response
                     char[] buff2 = new char[64];
